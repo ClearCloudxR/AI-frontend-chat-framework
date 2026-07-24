@@ -1,4 +1,4 @@
-# GPT-5.4 Mini · AI Chat Interface
+# AI Chat Interface
 
 A lightweight, single-page AI chat interface with Markdown rendering, code highlighting, and file upload support. Designed for the RSC community.
 
