@@ -33,7 +33,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>GPT-5.4 Mini · For RSC</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- icons are inline SVG, no external icon font needed -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 
@@ -52,21 +52,22 @@
 
   <style>
     :root{
-      --bg:#0d0f14;
-      --bg2:#12151d;
-      --panel:#161a24;
-      --panel2:#1b2030;
-      --line:rgba(255,255,255,.08);
-      --line2:rgba(255,255,255,.14);
+      --bg:#000000;
+      --bg2:#050505;
+      --panel:#111113;
+      --panel2:#17171b;
+      --line:rgba(255,255,255,.07);
+      --line2:rgba(255,255,255,.13);
       --line3:rgba(255,255,255,.20);
-      --text:#eaeef5;
-      --muted:#8b95a5;
+      --text:#f2f4f8;
+      --muted:#8b8f9c;
       --accent:#5B7CF0;
       --accent2:#8BA4F7;
       --accent-dim:rgba(91,124,240,.10);
       --danger:#ef4444;
-      --shadow:0 18px 54px rgba(0,0,0,.4);
-      --shadow-sm:0 6px 18px rgba(0,0,0,.25);
+      --shadow:0 24px 70px rgba(0,0,0,.65);
+      --shadow-sm:0 8px 22px rgba(0,0,0,.45);
+      --glow:0 0 0 1px rgba(91,124,240,.08),0 18px 50px rgba(91,124,240,.10);
       --radius:18px;
       --radius-sm:10px;
       --radius-md:14px;
@@ -80,19 +81,24 @@
       --ease-smooth:cubic-bezier(0.22,1,0.36,1);
       --ease-bounce:cubic-bezier(0.34,1.56,0.64,1);
       --ease-out:cubic-bezier(0.16,1,0.3,1);
+      --ease-premium:cubic-bezier(0.19,1,0.22,1);
     }
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%}
     body{
       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(91,124,240,.10), transparent 26%),
-        radial-gradient(circle at bottom right, rgba(139,164,247,.05), transparent 28%),
-        linear-gradient(180deg, #0a0c11, var(--bg) 30%);
+        radial-gradient(circle at 12% -10%, rgba(91,124,240,.14), transparent 32%),
+        radial-gradient(circle at 100% 12%, rgba(139,164,247,.07), transparent 30%),
+        radial-gradient(circle at 50% 120%, rgba(91,124,240,.05), transparent 38%),
+        var(--bg);
       color:var(--text);
       overflow:hidden;
       -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
+    ::selection{background:rgba(91,124,240,.35);color:#fff}
+    *:focus-visible{outline:2px solid rgba(91,124,240,.6);outline-offset:2px}
     button,input,textarea{font:inherit}
     button{cursor:pointer;-webkit-tap-highlight-color:transparent}
     .app{display:flex;height:100vh;width:100%;overflow:hidden;position:relative}
@@ -100,15 +106,15 @@
     .sidebar{
       width:var(--sidebar);
       flex-shrink:0;
-      background:linear-gradient(180deg, rgba(20,24,35,.98), rgba(14,17,24,.96));
+      background:linear-gradient(180deg, rgba(13,13,15,.97), rgba(2,2,3,.98));
       border-right:1px solid var(--line);
       display:flex;
       flex-direction:column;
       height:calc(100vh + 60px);
       position:relative;
       z-index:5;
-      box-shadow:8px 0 32px rgba(0,0,0,.45), 1px 0 0 rgba(255,255,255,.04);
-      transition:margin-left .45s var(--ease-out),width .45s var(--ease-out),transform .45s var(--ease-out),box-shadow .45s var(--ease-out);
+      box-shadow:8px 0 40px rgba(0,0,0,.6), 1px 0 0 rgba(255,255,255,.03);
+      transition:margin-left .5s var(--ease-premium),width .5s var(--ease-premium),transform .5s var(--ease-premium),box-shadow .5s var(--ease-premium);
     }
     .sidebar.collapsed{width:0;overflow:hidden;border-right:none;}
     .sidebar-header{
@@ -128,6 +134,7 @@
       transition:transform .3s var(--ease-bounce);
     }
     .logo-badge:hover{transform:rotate(-8deg) scale(1.08)}
+    .logo-badge svg{width:16px;height:16px}
     .icon-btn{
       width:36px;height:36px;border-radius:12px;
       border:1px solid var(--line);
@@ -136,9 +143,14 @@
       display:inline-flex;align-items:center;justify-content:center;
       transition:all .22s var(--ease-out);
     }
+    .icon-btn svg{width:17px;height:17px}
     .icon-btn:hover{background:rgba(255,255,255,.08);color:var(--text);border-color:var(--line2);transform:translateY(-1px)}
     .icon-btn:active{transform:translateY(0) scale(.94)}
     .sidebar-search{position:relative}
+    .sidebar-search svg{
+      position:absolute;left:12px;top:50%;transform:translateY(-50%);
+      color:var(--muted);width:14px;height:14px;pointer-events:none;
+    }
     .sidebar-search input{
       width:100%;
       padding:11px 12px 11px 36px;
@@ -227,7 +239,7 @@
     .history-more-btn:hover{background:rgba(255,255,255,.08);color:var(--text)}
     .history-dropdown{
       position:absolute;top:calc(100% + 6px);bottom:auto;right:6px;
-      background:linear-gradient(180deg,#1a2030,#141925);
+      background:linear-gradient(180deg,#17171b,#0a0a0b);
       border:1px solid var(--line2);
       border-radius:12px;
       padding:6px;
@@ -260,7 +272,7 @@
     .chat-header{
       height:var(--header);
       border-bottom:1px solid var(--line);
-      background:rgba(11,13,18,.65);
+      background:rgba(0,0,0,.55);
       backdrop-filter:blur(16px);
       display:flex;align-items:center;gap:12px;
       padding:0 16px;flex-shrink:0;
@@ -386,13 +398,14 @@
       color:var(--accent2);font-size:26px;box-shadow:var(--shadow);
       animation:floatY 3s var(--ease) infinite;
     }
+    .empty-badge svg{width:30px;height:30px}
     .empty-state h2{color:var(--text);font-size:24px;margin-bottom:10px}
     .empty-state p{line-height:1.8}
 
     .message-row{
       display:flex;gap:14px;
       padding:10px 18px;max-width:1120px;margin:0 auto;
-      animation:msgInLeft .5s var(--ease-out) both;
+      animation:msgInLeft .38s var(--ease-premium) both;
       will-change:transform,opacity;
     }
     .message-row.user{
@@ -472,7 +485,7 @@
     }
     .msg-content pre{
       position:relative;
-      background:#0f131a;
+      background:#0a0a0b;
       border:1px solid rgba(255,255,255,.10);
       border-radius:14px;
       padding:14px;
@@ -488,7 +501,7 @@
     .code-toolbar{
       display:flex;align-items:center;gap:6px;
       padding:6px 10px;
-      background:linear-gradient(180deg,#1a2030,#141925);
+      background:linear-gradient(180deg,#17171b,#0a0a0b);
       border-bottom:1px solid rgba(255,255,255,.08);
       font-size:11px;
     }
@@ -556,6 +569,7 @@
       border:1px solid rgba(255,255,255,.10);
       color:var(--muted);font-size:12px
     }
+    .attach-item svg{width:15px;height:15px;flex-shrink:0}
     .attach-item img{
       width:48px;height:36px;object-fit:cover;border-radius:8px;
       border:1px solid rgba(255,255,255,.08)
@@ -716,7 +730,7 @@
     .params-panel {
       max-width: 920px;
       margin: 0 auto 10px;
-      background: linear-gradient(180deg, rgba(24,28,38,.96), rgba(19,23,31,.98));
+      background: linear-gradient(180deg, rgba(17,17,20,.92), rgba(6,6,7,.96));
       border: 1px solid var(--line2);
       border-radius: 16px;
       padding: 14px 18px;
@@ -813,6 +827,7 @@
       transition:all .2s var(--ease);
     }
     .params-reset-btn:hover { background: rgba(91,124,240,.08); color: var(--accent2); border-color: rgba(91,124,240,.3); }
+    .params-reset-btn svg{width:13px;height:13px}
 
     .mobile-model-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:99999;align-items:center;justify-content:center}
     .mobile-model-overlay.active{display:flex}
@@ -918,7 +933,7 @@
     }
     .input-container{
       max-width:800px;margin:0 auto;
-      background:linear-gradient(180deg, rgba(24,28,38,.96), rgba(19,23,31,.98));
+      background:linear-gradient(180deg, rgba(17,17,20,.92), rgba(6,6,7,.96));
       border:1.5px solid var(--line2);
       border-radius:22px;
       padding:2px 14px 2px;
@@ -946,17 +961,18 @@
       width:44px;height:32px;object-fit:cover;border-radius:8px;
       border:1px solid rgba(255,255,255,.10);
     }
+    .file-preview-item svg{width:15px;height:15px;flex-shrink:0}
     .file-remove{
       margin-left:4px;color:#9ca3af;cursor:pointer;font-size:15px;line-height:1;
       transition:color .18s var(--ease);
     }
     .file-remove:hover{color:#fff}
     .input-container textarea{
-      width:100%;min-height:44px;max-height:200px;resize:none;
+      width:100%;min-height:26px;max-height:200px;resize:none;
       border:none;outline:none;background:transparent;
       color:var(--text);font-size:15px;line-height:1.7;
-      padding:4px 2px 4px;
-      transition:height .18s var(--ease-out);
+      padding:9px 2px;
+      transition:height .28s var(--ease-premium);
       overflow-y:hidden;
     }
     .input-toolbar{
@@ -977,6 +993,7 @@
     .tool-btn:hover{background:rgba(91,124,240,.12);color:var(--accent2);transform:translateY(-2px)}
     .tool-btn:active{transform:translateY(0) scale(.92)}
     .tool-btn:not(.active){background:transparent!important;border:none!important}
+    .tool-btn svg{width:18px;height:18px}
     .tool-btn.active{
       background:transparent;
       color:var(--accent2);
@@ -1023,7 +1040,7 @@
     .model-dropdown{
       position:absolute;top:calc(100% + 8px);bottom:auto;left:0;right:auto;
       min-width:220px;max-width:calc(100vw - 24px);
-      background:linear-gradient(180deg, rgba(28,32,45,.98), rgba(22,26,36,.99));
+      background:linear-gradient(180deg, rgba(19,19,23,.97), rgba(7,7,8,.98));
       border:1px solid var(--line2);
       border-radius:16px;
       padding:8px;
@@ -1087,6 +1104,7 @@
       color:var(--accent);font-size:12px;
     }
     .model-item.active .model-item-check{display:flex}
+    .model-item-check svg{width:11px;height:11px}
     .model-item-badge{
       padding:2px 6px;border-radius:6px;
       background:rgba(91,124,240,.15);
@@ -1120,6 +1138,7 @@
     }
     .send-btn:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 14px 30px rgba(91,124,240,.32)}
     .send-btn:active{transform:translateY(0) scale(.97)}
+    .send-btn svg{width:16px;height:16px}
     .send-btn.disabled{opacity:.5;pointer-events:none;transform:none;box-shadow:none}
     .stop-btn{
       background:rgba(239,68,68,.18);
@@ -1130,6 +1149,7 @@
     .stop-btn.visible{display:inline-flex}
     .stop-btn:hover{background:rgba(239,68,68,.28);transform:translateY(-1px)}
     .stop-btn:active{transform:translateY(0) scale(.96)}
+    .stop-btn svg{width:13px;height:13px}
     .continue-btn{
       background:rgba(91,124,240,.16);
       color:#baf2e3;
@@ -1137,17 +1157,19 @@
       display:none;white-space:nowrap;flex-shrink:0
     }
     .continue-btn.visible{display:inline-flex}
+    .continue-btn svg{width:14px;height:14px}
     .continue-btn:hover{background:rgba(91,124,240,.24);transform:translateY(-1px)}
     .continue-btn:active{transform:translateY(0) scale(.96)}
 
     .toast{
       position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(24px);
       z-index:9999;opacity:0;
-      background:rgba(25,29,38,.96);
+      background:rgba(14,14,16,.92);
+      backdrop-filter:blur(14px);
       border:1px solid var(--line2);
       color:#fff;padding:10px 18px;border-radius:14px;
       box-shadow:var(--shadow);font-size:13px;
-      transition:transform .35s var(--ease-bounce),opacity .3s var(--ease-out);
+      transition:transform .4s var(--ease-premium),opacity .3s var(--ease-out);
       pointer-events:none;
     }
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -1174,7 +1196,7 @@
       .message-row{padding:8px 10px;animation:fadeInUp .3s var(--ease-out) both}
       .msg-content-wrapper{max-width:85%}
       .message-row.user .msg-content-wrapper{max-width:80%;text-align:left;margin-left:auto}
-      .chat-header{padding:0 12px;height:52px;backdrop-filter:blur(20px);background:rgba(11,13,18,.85);white-space:nowrap;overflow:hidden}
+      .chat-header{padding:0 12px;height:52px;backdrop-filter:blur(20px);background:rgba(0,0,0,.75);white-space:nowrap;overflow:hidden}
       .header-model-selector .model-selector-btn{height:32px;padding:0 10px;font-size:13px;white-space:nowrap;flex-shrink:0}
       .model-selector-label{font-size:10px}
       #headerCurrentModelName{font-size:14px;white-space:nowrap}
@@ -1200,11 +1222,11 @@
       .tool-btn.active circle[fill]{fill:var(--accent2)!important}
       .send-area{justify-content:flex-end;gap:6px;flex-shrink:0}
       .send-btn,.stop-btn,.continue-btn{height:36px;min-width:36px;padding:0 12px;border-radius:12px;transition:all .2s var(--ease-smooth);font-size:14px}
-      .send-btn svg{font-size:15px}
+      .send-btn svg{width:16px;height:16px}
       .send-btn:active,.stop-btn:active{transform:scale(.92)}
       .params-grid { grid-template-columns: 1fr 1fr; }
       .chat-messages{ padding:8px 0 8px; }
-      .chat-input-area{padding:4px 10px 6px;background:rgba(11,13,18,.75)}
+      .chat-input-area{padding:4px 10px 6px;background:rgba(0,0,0,.65)}
       .scroll-bottom-btn{right:12px;bottom:195px;width:38px;height:38px;transition:all .3s var(--ease-bounce)}
       .input-container{border-radius:18px;padding:8px 12px;transition:border-color .3s var(--ease-smooth);border:1px solid rgba(255,255,255,.08)}
       .input-container:focus-within{border-color:rgba(91,124,240,.5)}
@@ -1248,7 +1270,7 @@
     }
     .easter-egg-overlay.active { display: flex; }
     .easter-egg-dialog {
-      background: linear-gradient(180deg, rgba(28,32,40,.98), rgba(20,24,35,.98));
+      background: linear-gradient(180deg, rgba(18,18,22,.97), rgba(6,6,7,.98));
       border: 1px solid rgba(91,124,240,.3);
       border-radius: 20px;
       padding: 32px 28px 24px;
@@ -1319,23 +1341,21 @@
     .edit-msg-overlay.active { display:flex; }
     .edit-msg-dialog { background:var(--panel); border:1px solid var(--line2); border-radius:18px; padding:24px; max-width:520px; width:90%; animation: modalIn .4s var(--ease-bounce) both; }
     .edit-msg-dialog h3 { font-size:15px; margin-bottom:14px; color:var(--text); }
+    .edit-msg-dialog h3 svg{width:16px;height:16px;vertical-align:-3px}
     .edit-msg-dialog textarea { width:100%; min-height:100px; max-height:240px; resize:vertical; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.04); color:var(--text); font-size:14px; line-height:1.7; padding:12px 14px; outline:none; transition:border-color .2s var(--ease-out); }
     .edit-msg-dialog textarea:focus { border-color: rgba(91,124,240,.5); box-shadow: 0 0 0 4px rgba(91,124,240,.10); }
     .edit-msg-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:16px; }
 
     @keyframes msgInRight{
-      0%{opacity:0;transform:translateX(18px) translateY(4px) scale(.97)}
-      60%{opacity:1;transform:translateX(-1px) translateY(-1px) scale(1.003)}
+      0%{opacity:0;transform:translateX(14px) translateY(6px) scale(.98)}
       100%{opacity:1;transform:translateX(0) translateY(0) scale(1)}
     }
     @keyframes msgInLeft{
-      0%{opacity:0;transform:translateX(-18px) translateY(4px) scale(.97)}
-      60%{opacity:1;transform:translateX(1px) translateY(-1px) scale(1.003)}
+      0%{opacity:0;transform:translateX(-14px) translateY(6px) scale(.98)}
       100%{opacity:1;transform:translateX(0) translateY(0) scale(1)}
     }
     @keyframes msgIn{
-      0%{opacity:0;transform:translateY(16px) scale(.97)}
-      60%{opacity:1;transform:translateY(-2px) scale(1.005)}
+      0%{opacity:0;transform:translateY(10px) scale(.98)}
       100%{opacity:1;transform:translateY(0) scale(1)}
     }
     @keyframes fadeInUp{
@@ -1398,13 +1418,13 @@
       <div class="sidebar-header">
         <div class="brand-row">
           <div class="logo">
-            <span class="logo-badge"><i class="fas fa-wand-magic-sparkles"></i></span>
+            <span class="logo-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"></path><path d="m14 7 3 3"></path><path d="M5 6v4"></path><path d="M19 14v4"></path><path d="M10 2v2"></path><path d="M7 8H3"></path><path d="M21 16h-4"></path><path d="M11 3H9"></path></svg></span>
             <span style="font-size: 17px; font-weight: bold">GPT-5.4 Mini</span>
           </div>
         </div>
 
         <div class="sidebar-search">
-          <i class="fas fa-magnifying-glass"></i>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input id="sidebarSearch" type="text" placeholder="按标题搜索对话">
         </div>
       </div>
@@ -1421,19 +1441,19 @@
     <main class="main">
       <div class="chat-header">
         <button class="sidebar-toggle" id="sidebarToggle" title="切换侧边栏">
-          <i class="fas fa-bars"></i>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
         </button>
         <div class="model-selector header-model-selector" id="headerModelSelector">
           <button class="model-selector-btn" id="headerModelSelectorBtn">
             <span id="headerCurrentModelName">GPT-5.4 Mini</span>
             <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg>
           </button>
-          <div class="model-dropdown" id="headerModelDropdown"><div class="model-dropdown-header">选择模型</div><div class="model-item" data-model="deepseek-v4-pro" data-enabled="true"><div class="model-item-info"><div class="model-item-name">DeepSeek-V4-Pro</div><div class="model-item-desc">适合复杂问题和逻辑推理</div></div><div class="model-item-check"><i class="fas fa-check"></i></div></div><div class="model-item active recommended" data-model="gpt-5.4-mini" data-enabled="true"><div class="model-item-info"><div class="model-item-name">GPT-5.4 Mini</div><div class="model-item-desc">适合日常事务和问题分析</div></div><div class="model-item-badge recommended-badge">推荐</div><div class="model-item-check"><i class="fas fa-check"></i></div></div><div class="model-item disabled" data-model="minimax-m3" data-enabled="false"><div class="model-item-info"><div class="model-item-name">MiniMax-M3</div><div class="model-item-desc">长文本和中文能力强</div></div></div><div class="model-item disabled" data-model="glm-5.2" data-enabled="false"><div class="model-item-info"><div class="model-item-name">GLM-5.2</div><div class="model-item-desc">长程编程与工程交付</div></div></div><div class="model-item disabled" data-model="gpt-image-2" data-enabled="false"><div class="model-item-info"><div class="model-item-name">GPT Image-2</div><div class="model-item-desc">世界上最强的生图模型</div></div></div><div class="model-item disabled" data-model="gemini-3.1-pro" data-enabled="false"><div class="model-item-info"><div class="model-item-name">Gemini-3.1-Pro</div><div class="model-item-desc">多模态与推理能力</div></div></div><div class="model-item disabled" data-model="gpt-5.6-sol" data-enabled="false"><div class="model-item-info"><div class="model-item-name">GPT-5.6 Sol</div><div class="model-item-desc">更高难度的推理与编程</div></div></div><div class="model-item disabled" data-model="gork-4.2" data-enabled="false"><div class="model-item-info"><div class="model-item-name">Gork-4.2</div><div class="model-item-desc">思路灵活，幽默讽刺</div></div></div><div class="model-item disabled" data-model="gpt-4o" data-enabled="false"><div class="model-item-info"><div class="model-item-name">GPT-4o</div><div class="model-item-desc">快且自然的实时多模态</div></div></div></div>
+          <div class="model-dropdown" id="headerModelDropdown"><div class="model-dropdown-header">选择模型</div><div class="model-item" data-model="deepseek-v4-pro" data-enabled="true"><div class="model-item-info"><div class="model-item-name">DeepSeek-V4-Pro</div><div class="model-item-desc">适合复杂问题和逻辑推理</div></div><div class="model-item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div></div><div class="model-item active recommended" data-model="gpt-5.4-mini" data-enabled="true"><div class="model-item-info"><div class="model-item-name">GPT-5.4 Mini</div><div class="model-item-desc">适合日常事务和问题分析</div></div><div class="model-item-badge recommended-badge">推荐</div><div class="model-item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div></div><div class="model-item disabled" data-model="minimax-m3" data-enabled="false"><div class="model-item-info"><div class="model-item-name">MiniMax-M3</div><div class="model-item-desc">长文本和中文能力强</div></div></div><div class="model-item disabled" data-model="glm-5.2" data-enabled="false"><div class="model-item-info"><div class="model-item-name">GLM-5.2</div><div class="model-item-desc">长程编程与工程交付</div></div></div><div class="model-item disabled" data-model="gpt-image-2" data-enabled="false"><div class="model-item-info"><div class="model-item-name">GPT Image-2</div><div class="model-item-desc">世界上最强的生图模型</div></div></div><div class="model-item disabled" data-model="gemini-3.1-pro" data-enabled="false"><div class="model-item-info"><div class="model-item-name">Gemini-3.1-Pro</div><div class="model-item-desc">多模态与推理能力</div></div></div><div class="model-item disabled" data-model="gpt-5.6-sol" data-enabled="false"><div class="model-item-info"><div class="model-item-name">GPT-5.6 Sol</div><div class="model-item-desc">更高难度的推理与编程</div></div></div><div class="model-item disabled" data-model="gork-4.2" data-enabled="false"><div class="model-item-info"><div class="model-item-name">Gork-4.2</div><div class="model-item-desc">思路灵活，幽默讽刺</div></div></div><div class="model-item disabled" data-model="gpt-4o" data-enabled="false"><div class="model-item-info"><div class="model-item-name">GPT-4o</div><div class="model-item-desc">快且自然的实时多模态</div></div></div></div>
         </div>
 
         <div class="header-right">
           <button class="header-action" id="headerParamsBtn" title="调整模型参数">
-            <i class="fas fa-sliders"></i> 参数
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg> 参数
           </button>
           <button class="header-action" id="headerShareBtn" title="分享对话">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.8"></circle><circle cx="6" cy="12" r="2.8"></circle><circle cx="18" cy="19" r="2.8"></circle><line x1="8.4" y1="10.7" x2="15.6" y2="6.3"></line><line x1="8.4" y1="13.3" x2="15.6" y2="17.7"></line></svg> 分享
@@ -1481,7 +1501,7 @@
             <div class="param-hint">固定随机种子，相同种子和输入产生相同输出，0=随机</div>
           </div>
         </div>
-        <button class="params-reset-btn" id="paramsResetBtn"><i class="fas fa-arrow-rotate-left"></i> 恢复默认</button>
+        <button class="params-reset-btn" id="paramsResetBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg> 恢复默认</button>
         <div class="params-footer">
           <button class="params-cancel-btn" id="paramsCancelBtn">取消</button>
           <button class="params-ok-btn" id="paramsOkBtn">确认</button>
@@ -1520,13 +1540,13 @@
 
             <div class="send-area">
               <button class="continue-btn" id="continueBtn">
-                <i class="fas fa-forward"></i> 继续生成
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg> 继续生成
               </button>
               <button class="stop-btn" id="stopBtn">
-                <i class="fas fa-stop"></i>
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>
               </button>
               <button class="send-btn disabled" id="sendBtn">
-                <i class="fas fa-paper-plane"></i>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
               </button>
             </div>
           </div>
@@ -1599,7 +1619,7 @@
 
   <div class="edit-msg-overlay" id="editMsgOverlay">
     <div class="edit-msg-dialog">
-      <h3><i class="fas fa-pen-to-square"></i> 修改消息</h3>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg> 修改消息</h3>
       <textarea id="editMsgInput" placeholder="修改你的消息..."></textarea>
       <div class="edit-msg-actions">
         <button class="confirm-cancel-btn" id="editMsgCancelBtn">取消</button>
@@ -1780,7 +1800,7 @@
         var recommendedClass = key === 'gpt-5.4-mini' ? ' recommended' : '';
         var disabledClass = cfg.enabled ? '' : ' disabled';
         var badge = key === 'gpt-5.4-mini' ? '<div class="model-item-badge recommended-badge">推荐</div>' : '';
-        var check = cfg.enabled ? '<div class="model-item-check"><i class="fas fa-check"></i></div>' : '';
+        var check = cfg.enabled ? '<div class="model-item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>' : '';
         html += '<div class="model-item' + activeClass + recommendedClass + disabledClass + '" data-model="' + key + '" data-enabled="' + cfg.enabled + '"><div class="model-item-info"><div class="model-item-name">' + cfg.name + '</div><div class="model-item-desc">' + (cfg.desc || '') + '</div></div>' + badge + check + '</div>';
       }
       dropdown.innerHTML = html;
@@ -2294,7 +2314,7 @@
       var out = '';
       for (var i = 0; i < files.length; i++) {
         var f = files[i];
-        out += f.kind === 'image' && f.data ? '<div class="attach-item"><img src="'+f.data+'" alt=""><span>'+escapeHtml(f.path)+'</span></div>' : '<div class="attach-item"><i class="fas fa-file-lines"></i><span>'+escapeHtml(f.path)+'</span></div>';
+        out += f.kind === 'image' && f.data ? '<div class="attach-item"><img src="'+f.data+'" alt=""><span>'+escapeHtml(f.path)+'</span></div>' : '<div class="attach-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg><span>'+escapeHtml(f.path)+'</span></div>';
       }
       return '<div class="msg-attachments">'+out+'</div>';
     }
@@ -2317,7 +2337,7 @@
 
     function showEmptyState() {
       var g = currentGreeting || getRandomGreeting();
-      chatMessages.innerHTML = '<div class="empty-state"><div class="empty-badge"><i class="fas fa-wand-magic-sparkles"></i></div><h2>'+escapeHtml(g)+'</h2><p>输入问题或上传文件，我来帮你分析喵<br>由 因式分解x 开发</p></div>';
+      chatMessages.innerHTML = '<div class="empty-state"><div class="empty-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"></path><path d="m14 7 3 3"></path><path d="M5 6v4"></path><path d="M19 14v4"></path><path d="M10 2v2"></path><path d="M7 8H3"></path><path d="M21 16h-4"></path><path d="M11 3H9"></path></svg></div><h2>'+escapeHtml(g)+'</h2><p>输入问题或上传文件，我来帮你分析喵<br>由 因式分解x 开发</p></div>';
     }
     function removeEmptyState() {
       var es = chatMessages.querySelector('.empty-state');
@@ -2557,7 +2577,7 @@
 
     function addFilePreview(fileData) {
       var preview = document.createElement('div'); preview.className = 'file-preview-item';
-      preview.innerHTML = fileData.kind === 'image' && fileData.data ? '<img src="'+fileData.data+'" alt=""><span>'+escapeHtml(fileData.path)+'</span><span class="file-remove">×</span>' : '<i class="fas fa-file-lines" style="color:#5B7CF0;"></i><span>'+escapeHtml(fileData.path)+'</span><span class="file-remove">×</span>';
+      preview.innerHTML = fileData.kind === 'image' && fileData.data ? '<img src="'+fileData.data+'" alt=""><span>'+escapeHtml(fileData.path)+'</span><span class="file-remove">×</span>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg><span>'+escapeHtml(fileData.path)+'</span><span class="file-remove">×</span>';
       preview.querySelector('.file-remove').onclick = function () { uploadedFiles = uploadedFiles.filter(function (f) { return f.id !== fileData.id; }); if (preview.parentNode) preview.parentNode.removeChild(preview); updateSendState(); };
       filePreviews.appendChild(preview);
     }
@@ -2735,7 +2755,7 @@
     function enableInlineEdit(item, session) {
       var titleNode = item.querySelector('.history-title'); if (!titleNode) return;
       var input = document.createElement('input'); input.value = session.title || session.summary || '新对话';
-      input.style.cssText = 'width:100%;background:#10151d;border:1px solid rgba(91,124,240,.35);color:#eef2f7;padding:8px 10px;border-radius:10px;font-size:13px;outline:none;';
+      input.style.cssText = 'width:100%;background:#0a0a0c;border:1px solid rgba(91,124,240,.35);color:#eef2f7;padding:8px 10px;border-radius:10px;font-size:13px;outline:none;';
       titleNode.parentNode.replaceChild(input, titleNode); input.focus(); input.select();
       function saveEdit() { var nt = input.value.trim() || '新对话'; session.title = nt; session.summary = nt; session.updatedAt = Date.now(); saveSessions(); renderChatHistory(); }
       input.onblur = saveEdit;
@@ -2910,51 +2930,170 @@
       return payload;
     }
 
-    function createStreamRenderer(contentDiv) {
-      var pending = false, lastText = '';
-      var lastUpdateTime = 0, pulseEl = null, pulseTimer = null, showPulse = false;
+    // Renders streamed text with a smooth, self-paced "typewriter" reveal so the UI
+    // always feels like it's streaming, even if the network delivers text in large
+    // bursts (or a single buffered chunk). Takes the typing-dots element explicitly
+    // instead of closing over a caller-local variable, since this function is a
+    // sibling of sendMessage/continueGeneration, not nested inside them.
+    function createStreamRenderer(contentDiv, typingDotsEl) {
+      var target = '', shown = '';
+      var rafId = null, pulseEl = null, resolveFlush = null, finishing = false;
+
       function ensurePulseEl() {
         if (!pulseEl) {
           pulseEl = document.createElement('span');
           pulseEl.className = 'stream-pulse';
           pulseEl.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
         }
+        return pulseEl;
       }
+      function clearTypingDots() {
+        if (typingDotsEl && typingDotsEl.parentNode) typingDotsEl.parentNode.removeChild(typingDotsEl);
+      }
+      function renderNow(withPulse) {
+        clearTypingDots();
+        contentDiv.innerHTML = renderMarkdown(shown);
+        enhance(contentDiv);
+        if (withPulse) contentDiv.appendChild(ensurePulseEl());
+        scrollToBottomIfNeeded(false);
+      }
+      function tick() {
+        if (shown.length < target.length) {
+          var remaining = target.length - shown.length;
+          var step = Math.max(2, Math.ceil(remaining * 0.3));
+          shown = target.slice(0, shown.length + step);
+          renderNow(true);
+          rafId = requestAnimationFrame(tick);
+        } else {
+          rafId = null;
+          if (finishing) {
+            renderNow(false);
+            if (resolveFlush) { var r = resolveFlush; resolveFlush = null; r(); }
+          } else {
+            renderNow(true);
+          }
+        }
+      }
+      function ensureLoop() { if (!rafId) rafId = requestAnimationFrame(tick); }
+
       return {
         update: function(text) {
-          lastText = text;
-          lastUpdateTime = Date.now();
-          showPulse = false;
-          if (pulseTimer) { clearTimeout(pulseTimer); pulseTimer = null; }
-          pulseTimer = setTimeout(function(){
-            showPulse = true;
-            ensurePulseEl();
-            if (typingDots && typingDots.parentNode) typingDots.parentNode.removeChild(typingDots);
-            contentDiv.innerHTML = renderMarkdown(lastText);
-            enhance(contentDiv);
-            contentDiv.appendChild(pulseEl);
-            scrollToBottomIfNeeded(false);
-          }, 800);
-          if (pending) return;
-          pending = true;
-          requestAnimationFrame(function(){
-            pending = false;
-            if (typingDots && typingDots.parentNode) typingDots.parentNode.removeChild(typingDots);
-            contentDiv.innerHTML = renderMarkdown(lastText);
-            enhance(contentDiv);
-            if (showPulse && pulseEl) contentDiv.appendChild(pulseEl);
-            scrollToBottomIfNeeded(false);
-          });
+          if (typeof text !== 'string' || text === target) return;
+          target = text;
+          ensureLoop();
         },
-        flush: function() {
-          if (pulseTimer) { clearTimeout(pulseTimer); pulseTimer = null; }
-          showPulse = false;
-          pulseEl = null;
-          contentDiv.innerHTML = renderMarkdown(lastText);
-          enhance(contentDiv);
-          scrollToBottomIfNeeded(false);
+        flush: function(instant) {
+          if (instant) {
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            shown = target;
+            finishing = false;
+            renderNow(false);
+            return;
+          }
+          finishing = true;
+          if (shown.length >= target.length) {
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            renderNow(false);
+            return Promise.resolve();
+          }
+          ensureLoop();
+          return new Promise(function (resolve) { resolveFlush = resolve; });
         }
       };
+    }
+
+    // Reads a chat-completion response and reports incremental text via callbacks.
+    // Handles standard OpenAI-style SSE ("data: {...}"), bare NDJSON lines with no
+    // "data:" prefix, raw plain-text token streams, and a backend that ignores
+    // stream:true and just returns one buffered JSON object — so the UI keeps
+    // working (and keeps actually streaming) no matter which of these the server
+    // at API_URL happens to do.
+    async function consumeChatResponse(response, payload, onDelta, onReasoningDelta) {
+      var canStream = !!(response.body && response.body.getReader);
+      var fullText = '', fullReasoning = '';
+
+      if (payload.stream && canStream) {
+        var reader = response.body.getReader(), decoder = new TextDecoder(), buffer = '';
+        var rawAll = '', sawFramedLine = false, gotAnyDelta = false;
+
+        function extractDeltaFrom(json) {
+          var delta = '', reasoningDelta = '';
+          if (json && json.choices && json.choices[0]) {
+            var ch = json.choices[0];
+            if (ch.delta) {
+              if (typeof ch.delta.content === 'string') delta = ch.delta.content;
+              if (typeof ch.delta.reasoning_content === 'string') reasoningDelta = ch.delta.reasoning_content;
+            } else if (ch.message) {
+              if (typeof ch.message.content === 'string') delta = ch.message.content;
+              if (typeof ch.message.reasoning_content === 'string') reasoningDelta = ch.message.reasoning_content;
+            }
+          } else if (json && typeof json.content === 'string') {
+            delta = json.content;
+          } else if (json && typeof json.delta === 'string') {
+            delta = json.delta;
+          } else if (json && typeof json.text === 'string') {
+            delta = json.text;
+          }
+          return { delta: delta, reasoningDelta: reasoningDelta };
+        }
+        function parseLine(rawLine) {
+          var line = rawLine.trim();
+          if (!line || line.charAt(0) === ':' || /^event:/i.test(line)) return;
+          var dl = line;
+          if (/^data:/i.test(dl)) { dl = dl.replace(/^data:\s?/i, '').trim(); sawFramedLine = true; }
+          if (!dl || dl === '[DONE]') return;
+          try {
+            var res = extractDeltaFrom(JSON.parse(dl));
+            if (res.delta) { gotAnyDelta = true; fullText += res.delta; if (onDelta) onDelta(fullText); }
+            if (res.reasoningDelta) { fullReasoning += res.reasoningDelta; if (onReasoningDelta) onReasoningDelta(fullReasoning); }
+          } catch (e) {
+            if (!sawFramedLine) { gotAnyDelta = true; fullText += rawLine + '\n'; if (onDelta) onDelta(fullText); }
+          }
+        }
+
+        while (true) {
+          var rr = await reader.read();
+          if (rr.done) break;
+          var chunkText = decoder.decode(rr.value, { stream: true });
+          rawAll += chunkText;
+          buffer += chunkText;
+          var lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          for (var i = 0; i < lines.length; i++) parseLine(lines[i]);
+        }
+        if (buffer) parseLine(buffer);
+
+        if (!gotAnyDelta && rawAll.trim()) {
+          try {
+            var whole = JSON.parse(rawAll.trim());
+            var res2 = extractDeltaFrom(whole);
+            if (res2.delta) { fullText = res2.delta; if (onDelta) onDelta(fullText); }
+            if (res2.reasoningDelta) { fullReasoning = res2.reasoningDelta; if (onReasoningDelta) onReasoningDelta(fullReasoning); }
+          } catch (e) {
+            fullText = rawAll; if (onDelta) onDelta(fullText);
+          }
+        }
+      } else {
+        var raw = await response.text();
+        try {
+          var data = JSON.parse(raw);
+          var res3 = extractOnce(data);
+          fullText = res3.content; fullReasoning = res3.reasoning;
+        } catch (e) {
+          fullText = raw || '';
+        }
+        if (onDelta) onDelta(fullText);
+        if (fullReasoning && onReasoningDelta) onReasoningDelta(fullReasoning);
+      }
+
+      return { content: fullText, reasoning: fullReasoning };
+
+      function extractOnce(data) {
+        var c0 = data && data.choices && data.choices[0];
+        var content = (c0 && c0.message && typeof c0.message.content === 'string') ? c0.message.content : (typeof data.content === 'string' ? data.content : '');
+        var reasoning = (c0 && c0.message && typeof c0.message.reasoning_content === 'string') ? c0.message.reasoning_content : '';
+        return { content: content, reasoning: reasoning };
+      }
     }
 
     async function sendMessage(isContinue, skipUserPush, oldAIForVersions) {
@@ -2996,7 +3135,7 @@
         appendMessage('user', userText || (attachments.length ? '上传了文件' : ''), { msgId: userMsg.id, attachments: attachments });
 
         messageInput.value = '';
-        messageInput.style.height = '44px';
+        messageInput.style.height = '26px';
         clearUploadedFiles(); updateSendState();
         if (window.innerWidth <= 768) messageInput.blur();
       }
@@ -3058,68 +3197,29 @@
       var baseMessages = conversationHistory.slice();
       var payload = buildChatPayload(baseMessages, false, attachments);
       var fullAIResponse = '';
-      var renderer = createStreamRenderer(contentDiv);
+      var renderer = createStreamRenderer(contentDiv, typingDots);
+      var fullReasoningContent = '';
 
       try {
-        abortController = new AbortController(); payload.signal = abortController.signal;
+        abortController = new AbortController();
         var response = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), signal:abortController.signal });
         if (!response.ok) throw new Error('请求失败 ('+response.status+')');
 
-        var ct = response.headers.get('content-type') || '';
-        var fullReasoningContent = '';
-        var isStream = payload.stream && (ct.indexOf('text/event-stream')>=0 || ct.indexOf('application/json')>=0 || !ct);
-        if (isStream && response.body && response.body.getReader) {
-          var reader = response.body.getReader(), decoder = new TextDecoder(), buffer = '';
-          while (true) {
-            var rr = await reader.read();
-            if (rr.done) break;
-            buffer += decoder.decode(rr.value,{stream:true});
-            var lines = buffer.split('\n');
-            buffer = lines.pop()||'';
-            for (var i = 0; i < lines.length; i++) {
-              var line = lines[i];
-              if (line.indexOf('data: ') !== 0) continue;
-              var dl = line.slice(6).trim();
-              if (!dl||dl==='[DONE]') continue;
-              try {
-                var json = JSON.parse(dl);
-                var delta = '';
-                var reasoningDelta = '';
-                if (json.choices&&json.choices[0]) {
-                  if (json.choices[0].delta) {
-                    if (typeof json.choices[0].delta.content==='string') delta = json.choices[0].delta.content;
-                    if (typeof json.choices[0].delta.reasoning_content==='string') reasoningDelta = json.choices[0].delta.reasoning_content;
-                  }
-                  else if (json.choices[0].message&&typeof json.choices[0].message.content==='string') delta = json.choices[0].message.content;
-                }
-
-                if (reasoningDelta && reasoningEnabled && reasoningContentDiv) {
-                  fullReasoningContent += reasoningDelta;
-                  reasoningBlock.classList.add('visible');
-                  reasoningContentDiv.textContent = fullReasoningContent;
-                  var elapsed = ((Date.now() - reasoningStartTime) / 1000).toFixed(1);
-                  if (reasoningTimeSpan) reasoningTimeSpan.textContent = '思考用时 ' + elapsed + 's';
-                  scrollToBottomIfNeeded(true);
-                }
-                if (delta) { removeThink(); fullAIResponse += delta; renderer.update(fullAIResponse); }
-              } catch(e){}
-            }
-          }
-        } else if (ct.indexOf('application/json')>=0) {
-          var dataOnce = await response.json();
-          fullAIResponse = (dataOnce.choices && dataOnce.choices[0] && dataOnce.choices[0].message && dataOnce.choices[0].message.content) || '';
-          fullReasoningContent = (dataOnce.choices && dataOnce.choices[0] && dataOnce.choices[0].message && dataOnce.choices[0].message.reasoning_content) || '';
+        await consumeChatResponse(response, payload, function (text) {
           removeThink();
-          if (reasoningEnabled && fullReasoningContent && reasoningContentDiv) {
-            reasoningContentDiv.textContent = fullReasoningContent;
-            reasoningBlock.classList.add('visible');
-            var elapsed = ((Date.now() - reasoningStartTime) / 1000).toFixed(1);
-            if (reasoningTimeSpan) reasoningTimeSpan.textContent = '思考用时 ' + elapsed + 's';
-          }
+          fullAIResponse = text;
           renderer.update(fullAIResponse);
-        }
+        }, function (reasoningText) {
+          if (!reasoningEnabled || !reasoningContentDiv) return;
+          fullReasoningContent = reasoningText;
+          reasoningBlock.classList.add('visible');
+          reasoningContentDiv.textContent = fullReasoningContent;
+          var elapsed = ((Date.now() - reasoningStartTime) / 1000).toFixed(1);
+          if (reasoningTimeSpan) reasoningTimeSpan.textContent = '思考用时 ' + elapsed + 's';
+          scrollToBottomIfNeeded(true);
+        });
         removeThink();
-        renderer.flush();
+        await renderer.flush();
 
         if (reasoningEnabled && reasoningTimeSpan && reasoningStartTime) {
           var finalElapsed = ((Date.now() - reasoningStartTime) / 1000).toFixed(1);
@@ -3154,7 +3254,7 @@
       } catch (e) {
         if (e && e.name === 'AbortError') {
           removeThink();
-          renderer.flush();
+          renderer.flush(true);
           assistantMsg.content = fullAIResponse;
           var ia = estimateTokens(getPromptTextFromMessages(buildPromptMessages(baseMessages, false)));
           var oa = estimateTokens(fullAIResponse);
@@ -3175,6 +3275,7 @@
           scrollToBottomIfNeeded(false);
         } else {
           removeThink();
+          if (typingDots && typingDots.parentNode) typingDots.parentNode.removeChild(typingDots);
           var errText = '❌ ' + (e && e.message ? e.message : '请求失败');
           contentDiv.innerHTML = renderMarkdown(errText); enhance(contentDiv);
           assistantMsg.content = errText;
@@ -3205,39 +3306,15 @@
 
       try {
         abortController = new AbortController();
-        var response = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'deepseek-chat', messages:promptMessages, temperature:modelParams.temperature, top_p:modelParams.top_p, max_tokens:modelParams.max_tokens, frequency_penalty:modelParams.frequency_penalty, presence_penalty:modelParams.presence_penalty, seed:modelParams.seed>0?modelParams.seed:undefined, stream:streamingEnabled, user_id:localStorage.getItem(USER_KEY)||'', session_id:currentSessionId, files:lastStoppedGeneration.attachments||[] }), signal:abortController.signal });
+        var cgPayload = { model:'deepseek-chat', messages:promptMessages, temperature:modelParams.temperature, top_p:modelParams.top_p, max_tokens:modelParams.max_tokens, frequency_penalty:modelParams.frequency_penalty, presence_penalty:modelParams.presence_penalty, seed:modelParams.seed>0?modelParams.seed:undefined, stream:streamingEnabled, user_id:localStorage.getItem(USER_KEY)||'', session_id:currentSessionId, files:lastStoppedGeneration.attachments||[] };
+        var response = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cgPayload), signal:abortController.signal });
         if (!response.ok) throw new Error('请求失败 ('+response.status+')');
-        var ct2 = response.headers.get('content-type') || '';
-        if (ct2.indexOf('application/json')>=0) {
-          var d2 = await response.json();
-          fullAIResponse = partial + ((d2.choices && d2.choices[0] && d2.choices[0].message && d2.choices[0].message.content) || '');
+
+        await consumeChatResponse(response, cgPayload, function (text) {
+          fullAIResponse = partial + text;
           renderer.update(fullAIResponse);
-        } else if (response.body && response.body.getReader) {
-          var reader = response.body.getReader(), decoder = new TextDecoder(), buffer = '';
-          while (true) {
-            var rr = await reader.read();
-            if (rr.done) break;
-            buffer += decoder.decode(rr.value,{stream:true});
-            var lines = buffer.split('\n');
-            buffer = lines.pop()||'';
-            for (var i = 0; i < lines.length; i++) {
-              var line = lines[i];
-              if (line.indexOf('data: ') !== 0) continue;
-              var dl = line.slice(6).trim();
-              if (!dl||dl==='[DONE]') continue;
-              try {
-                var json = JSON.parse(dl);
-                var delta = '';
-                if (json.choices&&json.choices[0]) {
-                  if (json.choices[0].delta&&typeof json.choices[0].delta.content==='string') delta = json.choices[0].delta.content;
-                  else if (json.choices[0].message&&typeof json.choices[0].message.content==='string') delta = json.choices[0].message.content;
-                }
-                if (delta) { fullAIResponse += delta; renderer.update(fullAIResponse); }
-              } catch(e){}
-            }
-          }
-        }
-        renderer.flush();
+        }, null);
+        await renderer.flush();
 
         assistantMsg.content = fullAIResponse;
         var it = estimateTokens(getPromptTextFromMessages(promptMessages)), ot = estimateTokens(fullAIResponse), ct = calcCost(it, ot);
@@ -3251,7 +3328,7 @@
         isGenerating = false; stopBtn.classList.remove('visible'); continueBtn.classList.remove('visible'); updateSendBtnAfterStop(); scrollBottomBtn.classList.remove('generating');
         abortController = null; lastStoppedGeneration = null; scrollToBottomIfNeeded(false);
       } catch (e) {
-        if (e && e.name === 'AbortError') { renderer.flush(); showToast('已停止'); }
+        if (e && e.name === 'AbortError') { renderer.flush(true); showToast('已停止'); }
         else { showToast('继续失败：'+(e&&e.message?e.message:'未知错误')); }
         isGenerating = false; stopBtn.classList.remove('visible'); continueBtn.classList.add('visible'); updateSendBtnAfterStop(); scrollBottomBtn.classList.remove('generating'); abortController = null;
       }
@@ -3298,12 +3375,12 @@
           var chatArea = document.getElementById('chatMessages');
 
           var clone = chatArea.cloneNode(true);
-          clone.style.cssText = 'position:fixed;left:-9999px;top:0;width:720px;padding:30px;background:linear-gradient(180deg,#161a24,#0d0f14);color:#eaeef5;font-size:15px;line-height:1.7;z-index:-1;';
+          clone.style.cssText = 'position:fixed;left:-9999px;top:0;width:720px;padding:30px;background:linear-gradient(180deg,#111113,#000000);color:#eaeef5;font-size:15px;line-height:1.7;z-index:-1;';
 
           var btns = clone.querySelectorAll('.scroll-bottom-btn,.msg-actions,.msg-version-nav,.msg-foot,.thinking-indicator');
           for (var r = 0; r < btns.length; r++) { if (btns[r].parentNode) btns[r].parentNode.removeChild(btns[r]); }
           document.body.appendChild(clone);
-          var canvas = await html2canvas(clone, { backgroundColor: '#0d0f14', scale: 2, useCORS: true, logging: false });
+          var canvas = await html2canvas(clone, { backgroundColor: '#000000', scale: 2, useCORS: true, logging: false });
           document.body.removeChild(clone);
           return canvas.toDataURL('image/png');
         } catch (e) {
@@ -3357,8 +3434,8 @@
       canvas.height = headerHeight + contentHeight + footerHeight;
 
       var grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      grd.addColorStop(0, '#161a24');
-      grd.addColorStop(1, '#0d0f14');
+      grd.addColorStop(0, '#111113');
+      grd.addColorStop(1, '#000000');
       ctx.fillStyle = grd;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -3409,10 +3486,13 @@
     newChatBtn.onclick = function () { if (isGenerating && abortController) abortController.abort(); startFreshConversation(); if (window.innerWidth <= 768) closeSidebarFn(); };
     messageInput.oninput = function () {
       updateSendState();
+      var prevHeight = messageInput.style.height;
       messageInput.style.height = 'auto';
       var newHeight = Math.min(messageInput.scrollHeight, 200);
-      messageInput.style.height = newHeight + 'px';
+      messageInput.style.height = (prevHeight === newHeight + 'px') ? prevHeight : newHeight + 'px';
+      messageInput.style.overflowY = messageInput.scrollHeight > 200 ? 'auto' : 'hidden';
     };
+    messageInput.addEventListener('paste', function () { requestAnimationFrame(function () { messageInput.oninput(); }); });
     messageInput.onkeydown = function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(false); } };
     reasoningToggle.onclick = function () { reasoningEnabled = !reasoningEnabled; updateThinkingToggleUI(); };
     searchToggle.onclick = function () { searchEnabled = !searchEnabled; updateThinkingToggleUI(); };
